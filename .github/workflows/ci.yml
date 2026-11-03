@@ -1,0 +1,92 @@
+# 每个 PR 的自动检查（agents 规则 C54），按"精简 CI"写（C74，模板 agents/模板/ci.yml）。
+#   - 每次都跑：索引检查（C53）、类型检查、单元测试、浏览器级验收测试（C141）。项目小，不按路径跳过。
+#   - 推送到 staging → 部署测试版 practical-staging；推送到 main → 部署正式版 practical。
+#   - 同一分支连续推送时取消旧的运行；缓存依赖和浏览器；每个 job 都有 timeout-minutes；不开定时任务（全账号只有 5 个，C120）。
+# 分支保护只把汇总 job "ci-ok" 设为"必须通过"。
+# CI 不需要任何密钥：R2 用 Miniflare 的本地模拟。只有 deploy job 用 CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID，
+# 这两个由 Amos 自己填进仓库 Secrets（底线 1，《上线操作手册》第三步）；没填时 deploy.sh 打印"跳过"并成功（C103）。
+name: ci
+on:
+  pull_request:
+    branches: [staging, main]
+  push:
+    branches: [staging, main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  # 系统固定 ubuntu-24.04：2026-10-30 ubuntu-latest 换成 26.04 后 Playwright 装不了浏览器依赖（Marketing 踩过）
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      WRANGLER_SEND_METRICS: 'false'
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: 项目地图和项目索引（C53）
+        run: node scripts/check-project-index.mjs
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - name: 单元测试（出题、记分、CSV、素材清单、Worker 路由）
+        run: npm test
+      - name: 浏览器缓存
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npx playwright install --with-deps chromium
+      - name: 浏览器级验收（S1～S17 一条场景一条，真 Worker + 真本地 R2；agents C141）
+        run: node scripts/e2e-app.mjs --shots e2e-artifacts
+      - name: 验收失败时留证据（截图）
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failure
+          path: e2e-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # 汇总：分支保护只把这一项设为"必须通过"
+  ci-ok:
+    needs: [check]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: 汇总结果
+        run: |
+          echo '${{ toJSON(needs) }}'
+          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "有检查失败或被取消"; exit 1
+          fi
+
+  # 部署：只在推送到 staging（测试版）、main（正式版），并且 ci-ok 通过时
+  deploy:
+    needs: [ci-ok]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main') && needs.ci-ok.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: 部署（staging → practical-staging；main → practical）
+        env:
+          TARGET: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+        run: bash scripts/deploy.sh "$TARGET"
