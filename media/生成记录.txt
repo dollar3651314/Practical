@@ -1,0 +1,3 @@
+模型：flux-1-schnell（图）/ melotts（音频）
+生成日期：2026-11-03
+完整提示词原文见 scenes.json

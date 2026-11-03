@@ -1,0 +1,772 @@
+{
+  "生成时间": "2026-11-03T03:41:51.134Z",
+  "图片模型": "@cf/black-forest-labs/flux-1-schnell",
+  "音频模型": "@cf/myshell-ai/melotts",
+  "出图步数": 4,
+  "风格前缀": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image",
+  "文件": [
+    {
+      "场景": "01",
+      "格子": "audio",
+      "文件": "scene-01/scene-01-audio.mp3",
+      "提示词": "Hand me the stapler",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "01",
+      "格子": "correct",
+      "文件": "scene-01/scene-01-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, offering a grey stapler on an open palm",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "01",
+      "格子": "d1-phoneme",
+      "文件": "scene-01/scene-01-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, offering a small open box of loose staples on an open palm",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "01",
+      "格子": "d2-action",
+      "文件": "scene-01/scene-01-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, setting that stapler down on the desk, hand letting go",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "01",
+      "格子": "d3-function",
+      "文件": "scene-01/scene-01-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, offering two identical grey staplers, one in each hand",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "02",
+      "格子": "audio",
+      "文件": "scene-02/scene-02-audio.mp3",
+      "提示词": "Grab a coffee",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "02",
+      "格子": "correct",
+      "文件": "scene-02/scene-02-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, picking up a paper coffee cup from a counter",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "02",
+      "格子": "d1-phoneme",
+      "文件": "scene-02/scene-02-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, picking up a printed paper document from that counter",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "02",
+      "格子": "d2-action",
+      "文件": "scene-02/scene-02-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, putting that coffee cup back down on the counter",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "02",
+      "格子": "d3-function",
+      "文件": "scene-02/scene-02-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding two paper coffee cups, one in each hand",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "03",
+      "格子": "audio",
+      "文件": "scene-03/scene-03-audio.mp3",
+      "提示词": "Shut the door",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "03",
+      "格子": "correct",
+      "文件": "scene-03/scene-03-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pushing a wooden office door closed with one hand",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "03",
+      "格子": "d1-phoneme",
+      "文件": "scene-03/scene-03-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pushing a wooden desk drawer closed with one hand",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "03",
+      "格子": "d2-action",
+      "文件": "scene-03/scene-03-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling the same wooden office door open with one hand",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "03",
+      "格子": "d3-function",
+      "文件": "scene-03/scene-03-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, leaning sideways against the closed wooden office door",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "04",
+      "格子": "audio",
+      "文件": "scene-04/scene-04-audio.mp3",
+      "提示词": "Plug it in",
+      "估算neurons": 0.2
+    },
+    {
+      "场景": "04",
+      "格子": "correct",
+      "文件": "scene-04/scene-04-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pushing a white plug into a wall socket",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "04",
+      "格子": "d1-phoneme",
+      "文件": "scene-04/scene-04-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, winding that white cable into a coil in one hand",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "04",
+      "格子": "d2-action",
+      "文件": "scene-04/scene-04-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling that plug back out of the wall socket",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "04",
+      "格子": "d3-function",
+      "文件": "scene-04/scene-04-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pushing two white plugs into a twin wall socket",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "05",
+      "格子": "audio",
+      "文件": "scene-05/scene-05-audio.mp3",
+      "提示词": "Print it out",
+      "估算neurons": 0.2
+    },
+    {
+      "场景": "05",
+      "格子": "correct",
+      "文件": "scene-05/scene-05-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, taking a printed sheet out of a printer tray",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "05",
+      "格子": "d1-phoneme",
+      "文件": "scene-05/scene-05-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pinning a sheet of paper onto a cork board",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "05",
+      "格子": "d2-action",
+      "文件": "scene-05/scene-05-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, feeding a blank sheet into that printer top slot",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "05",
+      "格子": "d3-function",
+      "文件": "scene-05/scene-05-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, taking a thick stack of sheets out of that printer tray",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "06",
+      "格子": "audio",
+      "文件": "scene-06/scene-06-audio.mp3",
+      "提示词": "Turn on the light",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "06",
+      "格子": "correct",
+      "文件": "scene-06/scene-06-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, finger pressing a wall switch, one ceiling lamp lit",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "06",
+      "格子": "d1-phoneme",
+      "文件": "scene-06/scene-06-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, at that same wall, one arm pointing to the right side",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "06",
+      "格子": "d2-action",
+      "文件": "scene-06/scene-06-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, finger pushing that switch down, the ceiling lamp dark",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "06",
+      "格子": "d3-function",
+      "文件": "scene-06/scene-06-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, finger on a double wall switch, three ceiling lamps lit",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "07",
+      "格子": "audio",
+      "文件": "scene-07/scene-07-audio.mp3",
+      "提示词": "Have a seat",
+      "估算neurons": 0.2
+    },
+    {
+      "场景": "07",
+      "格子": "correct",
+      "文件": "scene-07/scene-07-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, open palm gesturing toward one empty office chair",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "07",
+      "格子": "d1-phoneme",
+      "文件": "scene-07/scene-07-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding a single sheet of paper in both hands",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "07",
+      "格子": "d2-action",
+      "文件": "scene-07/scene-07-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, standing up out of that office chair",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "07",
+      "格子": "d3-function",
+      "文件": "scene-07/scene-07-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, open palms gesturing toward two empty chairs side by side",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "08",
+      "格子": "audio",
+      "文件": "scene-08/scene-08-audio.mp3",
+      "提示词": "Pass it over",
+      "估算neurons": 0.2
+    },
+    {
+      "场景": "08",
+      "格子": "correct",
+      "文件": "scene-08/scene-08-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, offering a blue folder sideways across a desk",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "08",
+      "格子": "d1-phoneme",
+      "文件": "scene-08/scene-08-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, putting that blue folder down into a cardboard box",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "08",
+      "格子": "d2-action",
+      "文件": "scene-08/scene-08-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling that folder back to the chest in both hands",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "08",
+      "格子": "d3-function",
+      "文件": "scene-08/scene-08-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sliding that folder under the desk, arm below the top",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "09",
+      "格子": "audio",
+      "文件": "scene-09/scene-09-audio.mp3",
+      "提示词": "Put it on the screen",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "09",
+      "格子": "correct",
+      "文件": "scene-09/scene-09-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, arm pointing at a large wall screen lit plain blue, laptop open on the desk",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "09",
+      "格子": "d1-phoneme",
+      "文件": "scene-09/scene-09-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling a roll-down projector screen down from the wall",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "09",
+      "格子": "d2-action",
+      "文件": "scene-09/scene-09-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, closing the laptop lid, the wall screen dark",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "09",
+      "格子": "d3-function",
+      "文件": "scene-09/scene-09-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, arm pointing at two large wall screens side by side, both lit blue",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "10",
+      "格子": "audio",
+      "文件": "scene-10/scene-10-audio.mp3",
+      "提示词": "Write it on the whiteboard",
+      "估算neurons": 0.5
+    },
+    {
+      "场景": "10",
+      "格子": "correct",
+      "文件": "scene-10/scene-10-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, at a whiteboard, marker tip touching the board",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "10",
+      "格子": "d1-phoneme",
+      "文件": "scene-10/scene-10-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sitting at a desk, pen writing in a small notepad",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "10",
+      "格子": "d2-action",
+      "文件": "scene-10/scene-10-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, wiping that whiteboard clean with a board eraser",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "10",
+      "格子": "d3-function",
+      "文件": "scene-10/scene-10-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, between two whiteboards, marker touching the left one",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "11",
+      "格子": "audio",
+      "文件": "scene-11/scene-11-audio.mp3",
+      "提示词": "Raise your hand",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "11",
+      "格子": "correct",
+      "文件": "scene-11/scene-11-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, one arm raised straight up, palm open",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "11",
+      "格子": "d1-phoneme",
+      "文件": "scene-11/scene-11-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, both arms folded across the chest",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "11",
+      "格子": "d2-action",
+      "文件": "scene-11/scene-11-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, one arm hanging down at the side, palm open",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "11",
+      "格子": "d3-function",
+      "文件": "scene-11/scene-11-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, both arms raised straight up, both palms open",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "12",
+      "格子": "audio",
+      "文件": "scene-12/scene-12-audio.mp3",
+      "提示词": "Write it down",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "12",
+      "格子": "correct",
+      "文件": "scene-12/scene-12-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, looking down, pen writing in a small notepad on the desk",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "12",
+      "格子": "d1-phoneme",
+      "文件": "scene-12/scene-12-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, wiping the desk surface with a cloth",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "12",
+      "格子": "d2-action",
+      "文件": "scene-12/scene-12-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, closing that notepad and capping the pen",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "12",
+      "格子": "d3-function",
+      "文件": "scene-12/scene-12-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pen touching the middle of three blank sticky notes in a row",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "13",
+      "格子": "audio",
+      "文件": "scene-13/scene-13-audio.mp3",
+      "提示词": "Turn to page three",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "13",
+      "格子": "correct",
+      "文件": "scene-13/scene-13-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding an open notebook, finger on page three",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "13",
+      "格子": "d1-phoneme",
+      "文件": "scene-13/scene-13-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding an open notebook, finger on page thirteen",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "13",
+      "格子": "d2-action",
+      "文件": "scene-13/scene-13-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, closing the same notebook with both hands",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "13",
+      "格子": "d3-function",
+      "文件": "scene-13/scene-13-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding an open notebook, finger on page two",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "14",
+      "格子": "audio",
+      "文件": "scene-14/scene-14-audio.mp3",
+      "提示词": "Pull up a chair",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "14",
+      "格子": "correct",
+      "文件": "scene-14/scene-14-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling an office chair to the desk by its backrest",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "14",
+      "格子": "d1-phoneme",
+      "文件": "scene-14/scene-14-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling a folding display board to the desk by its edge",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "14",
+      "格子": "d2-action",
+      "文件": "scene-14/scene-14-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pushing that chair back under the desk",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "14",
+      "格子": "d3-function",
+      "文件": "scene-14/scene-14-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling two office chairs to the desk, one hand on each",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "15",
+      "格子": "audio",
+      "文件": "scene-15/scene-15-audio.mp3",
+      "提示词": "You're on mute",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "15",
+      "格子": "correct",
+      "文件": "scene-15/scene-15-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pointing at a laptop screen with a crossed-out microphone symbol",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "15",
+      "格子": "d1-phoneme",
+      "文件": "scene-15/scene-15-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pointing at own ear and shaking the head",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "15",
+      "格子": "d2-action",
+      "文件": "scene-15/scene-15-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pointing at that screen, plain microphone symbol, mouth open talking",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "15",
+      "格子": "d3-function",
+      "文件": "scene-15/scene-15-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pointing at that screen with a crossed-out camera symbol",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "16",
+      "格子": "audio",
+      "文件": "scene-16/scene-16-audio.mp3",
+      "提示词": "Share your screen",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "16",
+      "格子": "correct",
+      "文件": "scene-16/scene-16-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, turning an open laptop so its lit screen faces the viewer",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "16",
+      "格子": "d1-phoneme",
+      "文件": "scene-16/scene-16-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pushing an office chair sideways to the viewer, hands on its back",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "16",
+      "格子": "d2-action",
+      "文件": "scene-16/scene-16-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, turning that laptop back so the screen faces away",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "16",
+      "格子": "d3-function",
+      "文件": "scene-16/scene-16-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding up a laptop and a tablet side by side, both screens lit",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "17",
+      "格子": "audio",
+      "文件": "scene-17/scene-17-audio.mp3",
+      "提示词": "Turn your camera on",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "17",
+      "格子": "correct",
+      "文件": "scene-17/scene-17-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sliding open the small lens cover above a laptop screen",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "17",
+      "格子": "d1-phoneme",
+      "文件": "scene-17/scene-17-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling a desk microphone close to the mouth",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "17",
+      "格子": "d2-action",
+      "文件": "scene-17/scene-17-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, covering that lens with one palm, the screen dark",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "17",
+      "格子": "d3-function",
+      "文件": "scene-17/scene-17-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, an open laptop and a round webcam on a tripod, hand on the webcam",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "18",
+      "格子": "audio",
+      "文件": "scene-18/scene-18-audio.mp3",
+      "提示词": "You're breaking up",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "18",
+      "格子": "correct",
+      "文件": "scene-18/scene-18-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, frowning, hand cupped behind the ear, laptop screen image torn into bands",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "18",
+      "格子": "d1-phoneme",
+      "文件": "scene-18/scene-18-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, holding up a headset cable, pointing at its plug",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "18",
+      "格子": "d2-action",
+      "文件": "scene-18/scene-18-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, smiling, thumbs up, that laptop screen image clean and whole",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "18",
+      "格子": "d3-function",
+      "文件": "scene-18/scene-18-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, tapping the desk, that laptop screen completely black",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "19",
+      "格子": "audio",
+      "文件": "scene-19/scene-19-audio.mp3",
+      "提示词": "Check in",
+      "估算neurons": 0.2
+    },
+    {
+      "场景": "19",
+      "格子": "correct",
+      "文件": "scene-19/scene-19-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pressing an airport self check-in kiosk screen, a blank paper slip coming out",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "19",
+      "格子": "d1-phoneme",
+      "文件": "scene-19/scene-19-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, tossing a backpack into a plastic tray on a conveyor",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "19",
+      "格子": "d2-action",
+      "文件": "scene-19/scene-19-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, putting a passport away into a shoulder bag at that kiosk",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "19",
+      "格子": "d3-function",
+      "文件": "scene-19/scene-19-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, walking away from that kiosk, hand on a glass door handle",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "20",
+      "格子": "audio",
+      "文件": "scene-20/scene-20-audio.mp3",
+      "提示词": "Check your bag",
+      "估算neurons": 0.3
+    },
+    {
+      "场景": "20",
+      "格子": "correct",
+      "文件": "scene-20/scene-20-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, lifting a suitcase onto a baggage conveyor at a counter",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "20",
+      "格子": "d1-phoneme",
+      "文件": "scene-20/scene-20-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, turning the head to look back over own shoulder",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "20",
+      "格子": "d2-action",
+      "文件": "scene-20/scene-20-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, lifting that suitcase off the conveyor onto the floor",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "21",
+      "格子": "audio",
+      "文件": "scene-21/scene-21-audio.mp3",
+      "提示词": "Buckle up",
+      "估算neurons": 0.2
+    },
+    {
+      "场景": "21",
+      "格子": "correct",
+      "文件": "scene-21/scene-21-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sitting in an airplane seat, clicking the seat belt buckle shut",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "21",
+      "格子": "d1-phoneme",
+      "文件": "scene-21/scene-21-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, fastening a wrist watch strap on the other wrist",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "21",
+      "格子": "d2-action",
+      "文件": "scene-21/scene-21-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, pulling that seat belt buckle apart at the waist",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "21",
+      "格子": "d3-function",
+      "文件": "scene-21/scene-21-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, that seat belt loose across the lap, buckle open, hands on knees",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "26",
+      "格子": "audio",
+      "文件": "scene-26/scene-26-audio.mp3",
+      "提示词": "The check, please",
+      "估算neurons": 0.4
+    },
+    {
+      "场景": "26",
+      "格子": "correct",
+      "文件": "scene-26/scene-26-correct.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sitting at a restaurant table, raising one hand toward the waiter",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "26",
+      "格子": "d1-phoneme",
+      "文件": "scene-26/scene-26-d1-phoneme.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sitting at a restaurant table, pointing at a chess board on the table",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "26",
+      "格子": "d2-action",
+      "文件": "scene-26/scene-26-d2-action.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, sitting at the same table, handing a card to the waiter",
+      "估算neurons": 57.6
+    },
+    {
+      "场景": "26",
+      "格子": "d3-function",
+      "文件": "scene-26/scene-26-d3-function.jpg",
+      "提示词": "flat vector illustration, clean minimal style, one East Asian adult in a light blue shirt, waist-up framing, centered composition, plain light grey background, soft even lighting, no text, no letters, no numbers, no logo, no brand, square 1:1 image, standing beside the same restaurant table, hand down",
+      "估算neurons": 57.6
+    }
+  ]
+}
