@@ -16,7 +16,7 @@ case "$TARGET" in
   *) echo "用法：bash scripts/deploy.sh staging|production" >&2; exit 2 ;;
 esac
 if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
-  echo "· 跳过部署：还没有 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID（《上线操作手册》第三步由 Amos 填）"
+  echo "· 跳过部署：还没有 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID（《上线操作手册》第二步由 Amos 填）"
   exit 0
 fi
 export WRANGLER_SEND_METRICS=false
