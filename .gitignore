@@ -1,0 +1,7 @@
+node_modules/
+.wrangler/
+dist/
+wrangler.deploy.toml
+.dev.vars
+e2e-artifacts/
+素材/

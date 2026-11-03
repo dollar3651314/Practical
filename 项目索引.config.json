@@ -1,0 +1,28 @@
+{
+  "_说明": "项目地图和项目索引的检查配置（agents 规则 C53）。由 scripts/check-project-index.mjs 读取，CI 每次 PR 都会运行。",
+  "map": "项目地图.md",
+  "index": "项目索引.md",
+  "entry": ["CLAUDE.md", "AGENTS.md"],
+  "external": [
+    {
+      "_说明": "内部文档（阶段计划、使用场景清单、原型、素材方案、状态卡、交接记录）在 agents 仓库的 项目/Practical/（C119、C147）。索引里写成 `agents/项目/Practical/…` 的不在本仓库检查是否存在。",
+      "prefix": "agents/",
+      "repo": "dollar3651314/agents"
+    }
+  ],
+  "files": {
+    "include": ["src/**", "web/**", "test/**", "scripts/**", ".github/workflows/**", "package.json", "项目索引.config.json", "*.md"],
+    "exclude": ["**/package-lock.json", "**/.gitignore"]
+  },
+  "lists": [
+    {
+      "name": "环境变量",
+      "section": "5. 环境变量",
+      "sources": ["src/", "scripts/", ".github/workflows/"],
+      "patterns": ["\\benv(?:\\.|\\[['\"])([A-Z][A-Z0-9_]+)", "\\$\\{\\{\\s*(?:vars|secrets)\\.([A-Z][A-Z0-9_]+)"],
+      "match": "firstColumn",
+      "twoWay": "word",
+      "token": "^[A-Z][A-Z0-9_]+$"
+    }
+  ]
+}
