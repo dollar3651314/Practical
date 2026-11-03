@@ -3,14 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Practical 1.0 自用版：Level 1 盲听卡（听 2 秒 → 四图选一），Cloudflare Worker + R2，成绩只存这台设备",
+  "description": "Practical 1.0 自用版：Level 1 盲听卡（听 2 秒 → 四图选一），Cloudflare Worker + 静态资源（素材在仓库 media/），成绩只存这台设备",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.web.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "build": "node scripts/build-assets.mjs",
     "test": "vitest run",
     "e2e": "node scripts/e2e-app.mjs",
     "check-media": "node scripts/check-media.mjs",
     "check-index": "node scripts/check-project-index.mjs",
-    "dry-run": "wrangler deploy --dry-run --env= --outdir .wrangler/dry-run && wrangler deploy --dry-run --env=staging --outdir .wrangler/dry-run-staging"
+    "dry-run": "npm run build && wrangler deploy --dry-run --env= --outdir .wrangler/dry-run && wrangler deploy --dry-run --env=staging --outdir .wrangler/dry-run-staging"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20261006.1",

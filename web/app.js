@@ -1,6 +1,6 @@
 // Practical 1.0 自用版的界面。交互一比一照 Amos 2026-11-03 已确认的原型
 // （agents 项目/Practical/原型-Practical-盲听卡-v1.html），只把两样占位换成真的：
-//   占位合成音 → R2 里的 scene-NN-audio.mp3；代码画的简笔 SVG → R2 里的四张 768×768 图。
+//   占位合成音 → media/ 里的 scene-NN-audio.mp3；代码画的简笔 SVG → media/ 里的四张真图。
 // 纯逻辑在 core.js（单元测试直接测那边），这里只管 DOM、音频元素和网络。
 import {
   SLOTS, SLOW_RATE, ROUNDS_PER_DAY, QUESTIONS_PER_ROUND, MAX_AUDIO_FAILS, TIMING,
@@ -45,7 +45,7 @@ async function loadManifest() {
   MEDIA = manifestSummary(MANIFEST);
 }
 /**
- * 这个场景的五个文件在 R2 里叫什么（后缀以实际上传的为准）。
+ * 这个场景的五个文件叫什么（后缀以实际传进 media/ 的为准，.jpg / .png / .webp 都收）。
  * @param {string} id @returns {Record<string,string>}
  */
 function filesOf(id) {
@@ -58,7 +58,7 @@ function readyScenes() {
 }
 
 /* ============ 3. 声音 ============ */
-/** 1 秒测试音（S1 / S15）：用 Web Audio 当场合成，不依赖 R2——听不到声音的人先要能测 */
+/** 1 秒测试音（S1 / S15）：用 Web Audio 当场合成，不依赖任何素材——听不到声音的人先要能测 */
 let AC = /** @type {AudioContext|null} */ (null);
 function ctx() {
   if (!AC) { try { AC = new AudioContext(); } catch { AC = null; } }

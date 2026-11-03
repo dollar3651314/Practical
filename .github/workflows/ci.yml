@@ -3,8 +3,8 @@
 #   - 推送到 staging → 部署测试版 practical-staging；推送到 main → 部署正式版 practical。
 #   - 同一分支连续推送时取消旧的运行；缓存依赖和浏览器；每个 job 都有 timeout-minutes；不开定时任务（全账号只有 5 个，C120）。
 # 分支保护只把汇总 job "ci-ok" 设为"必须通过"。
-# CI 不需要任何密钥：R2 用 Miniflare 的本地模拟。只有 deploy job 用 CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID，
-# 这两个由 Amos 自己填进仓库 Secrets（底线 1，《上线操作手册》第三步）；没填时 deploy.sh 打印"跳过"并成功（C103）。
+# CI 不需要任何密钥：素材就在仓库的 media/ 里，e2e 自己构建 dist/ 起本地 Worker。只有 deploy job 用 CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID，
+# 这两个由 Amos 自己填进仓库 Secrets（底线 1，《上线操作手册》第二步）；没填时 deploy.sh 打印"跳过"并成功（C103）。
 name: ci
 on:
   pull_request:
@@ -36,7 +36,7 @@ jobs:
         run: node scripts/check-project-index.mjs
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
-      - name: 单元测试（出题、记分、CSV、素材清单、Worker 路由）
+      - name: 单元测试（出题、记分、CSV、素材清单、构建时扫素材、Worker 路由）
         run: npm test
       - name: 浏览器缓存
         uses: actions/cache@v4
@@ -44,7 +44,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - run: npx playwright install --with-deps chromium
-      - name: 浏览器级验收（S1～S17 一条场景一条，真 Worker + 真本地 R2；agents C141）
+      - name: 浏览器级验收（S1～S17 一条场景一条，真 Worker + 仓库里的真素材；agents C141）
         run: node scripts/e2e-app.mjs --shots e2e-artifacts
       - name: 验收失败时留证据（截图）
         if: failure()

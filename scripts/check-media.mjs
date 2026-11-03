@@ -2,8 +2,8 @@
 /**
  * 素材检查：告诉你 30 个场景里哪些齐了、哪些缺、哪些名字写错了。
  * 规则和线上完全一样（共用 src/manifest.js），所以这里说齐了，传上去就能出题。
- *   node scripts/check-media.mjs                  # 查本地文件夹 素材/
- *   node scripts/check-media.mjs <文件夹>          # 查别的文件夹
+ *   node scripts/check-media.mjs                  # 查仓库里的 media/（部署时真正会带上去的就是这些）
+ *   node scripts/check-media.mjs <文件夹>          # 查别的文件夹（比如还没拖进仓库的一堆新素材）
  *   node scripts/check-media.mjs --url https://practical.<子域名>.workers.dev
  *                                                # 查已经部署的那一套（读它的 /api/manifest）
  *   node scripts/check-media.mjs --json           # 只输出 JSON，给别的脚本用
@@ -18,7 +18,7 @@ const argv = process.argv.slice(2);
 const flag = (name) => { const i = argv.indexOf(name); return i >= 0 ? (argv[i + 1] || '') : null; };
 const JSON_ONLY = argv.includes('--json');
 const URL_ARG = flag('--url');
-const DIR = argv.find((a) => !a.startsWith('--') && a !== URL_ARG) || '素材';
+const DIR = argv.find((a) => !a.startsWith('--') && a !== URL_ARG) || 'media';
 const 槽位名 = { correct: '正确图', 'd1-phoneme': '音素干扰图', 'd2-action': '动作干扰图', 'd3-function': '虚词数字干扰图', audio: '音频' };
 
 /** 把一个文件夹（含子文件夹）里的文件名收集起来，只取最后一段 */
@@ -44,7 +44,7 @@ if (URL_ARG) {
 } else {
   where = path.resolve(DIR);
   if (!existsSync(where)) {
-    console.error(`没有这个文件夹：${where}\n把 Amos 生成的素材放进去，或者用 --url 查已经部署的那一套。`);
+    console.error(`没有这个文件夹：${where}\n把 Amos 生成的素材放进仓库的 media/，或者用 --url 查已经部署的那一套。`);
     process.exit(2);
   }
   names = scan(where);
@@ -79,5 +79,6 @@ if (!URL_ARG) {
   console.log('一个场景要五个文件，名字一个字母都不能改：');
   console.log('  ' + SLOTS.map((s) => `scene-01-${s}.${s === 'audio' ? 'mp3' : 'png'}`).join('  '));
 }
-console.log(manifest.ready === manifest.total ? '✓ 30 个场景全齐了，可以上传 R2（《上线操作手册》第四步）' : '✗ 还没齐，齐了的那些已经能出题，缺的会自动跳过');
+console.log(manifest.ready === manifest.total ? '✓ 30 个场景全齐了' : '✗ 还没齐，齐了的那些已经能出题，缺的会自动跳过');
+if (!URL_ARG) console.log('素材放进仓库的 media/ 文件夹、提交，CI 会自动构建并部署（《上线操作手册》第四步）；不用 R2，不用绑卡。');
 process.exit(manifest.ready === manifest.total ? 0 : 1);

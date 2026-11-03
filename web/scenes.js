@@ -1,6 +1,6 @@
 // 30 个场景（agents 项目/Practical/素材方案-30个场景.json，分支 claude/pm-practical-prompts）。
 // en = 这一题的英文语块（题目区不显示，只在复盘页出现）；zh = 中文意思（复盘页默认折叠）。
-// 每个场景对应 R2 里的 5 个文件：scene-<id>-correct / -d1-phoneme / -d2-action / -d3-function（图）+ scene-<id>-audio（音频）。
+// 每个场景对应 media/ 里的 5 个文件：scene-<id>-correct / -d1-phoneme / -d2-action / -d3-function（图）+ scene-<id>-audio（音频）。
 // 四张图的顺序固定为 [正确, 音素干扰, 动作干扰, 虚词数字干扰]，显示时打乱；下标即错误类型（core.js 的 ETYPE）。
 
 /** @typedef {{id:string,name:string,en:string,zh:string}} Scene */

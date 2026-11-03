@@ -273,7 +273,7 @@ describe('S17 设置只对这台设备生效：默认值', () => {
   });
 });
 
-describe('素材清单：R2 里有哪些、缺哪些（本次 1.0 的降级依据）', () => {
+describe('素材清单：media/ 里有哪些、缺哪些（本次 1.0 的降级依据）', () => {
   it('五个文件都齐了才算这一题可用', () => {
     const m = buildManifest(fullKeys(), SCENES.map((s) => s.id));
     expect(m.ready).toBe(30);

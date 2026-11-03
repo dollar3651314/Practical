@@ -1,44 +1,49 @@
 #!/usr/bin/env node
 /**
- * R2 桶一键准备（CI 部署前运行，可以重复运行）：按名字查这个账户的 R2 桶，没有就新建。
+ * 部署前的素材检查（CI 的 deploy job 运行，可以重复运行）：
  *   node scripts/ensure-r2.mjs --env staging|production
- * 需要环境变量 CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID（GitHub Secrets，由 Amos 填，底线 1）；令牌要有 R2 Edit 权限。
- * 输出里没有密钥。建不出来时把原因打出来并退出 1——《上线操作手册》第二步有"自己在控制台建"的做法。
- * 参照：Marketing scripts/ensure-d1.mjs。
+ *
+ * 这个文件原来是"R2 桶一键准备"：按名字查桶，没有就建。1.0 不走 R2 了，所以它不再碰 Cloudflare，
+ * 只剩一件事——把"这次部署会带上多少素材"说清楚，免得 Amos 传完素材不知道有没有生效。
+ *
+ * 为什么不再需要 R2（Amos 2026-11-03 拍的板）：
+ *   「现在还是我自己的功能与玩法验证阶段，我不想绑卡」。而 Cloudflare 开通 R2 **必须先绑付款方式**，
+ *   所以 1.0 的素材改成跟代码一起走 Workers 静态资源（免费版每个版本 20,000 个文件、每个文件 25 MiB，
+ *   官方文档没有写总量上限；我们是 109 个文件、最大 287 KB，差得很远）。
+ *   文件名留着不改，是因为将来要收费、素材要保密时会切回 R2——那时把这里换回"建桶"，
+ *   /media/<文件名> 和 /api/manifest 的形状不变，页面一行都不用动。
+ *
+ * 输出里没有密钥。退出码永远是 0：素材没齐不拦着部署（网站本来就会降级），只把话说清楚。
  */
-import { execFileSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { scanMedia } from './build-assets.mjs';
+import { buildManifest, SCENE_IDS } from '../src/manifest.js';
 
-export const BUCKETS = { production: 'practical-media', staging: 'practical-media-staging' };
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-/** wrangler r2 bucket list 的输出里把桶名抠出来（它可能是 JSON，也可能是人话表格） */
-export function parseBuckets(out) {
-  const i = out.indexOf('[');
-  if (i >= 0) {
-    try {
-      const arr = JSON.parse(out.slice(i));
-      if (Array.isArray(arr)) return arr.map((b) => (typeof b === 'string' ? b : b.name)).filter(Boolean);
-    } catch { /* 不是 JSON 就按人话解析 */ }
+export function main(argv = process.argv.slice(2)) {
+  const i = argv.indexOf('--env');
+  const env = i >= 0 ? argv[i + 1] : '';
+  if (!['staging', 'production'].includes(env)) {
+    console.error('用法：node scripts/ensure-r2.mjs --env staging|production');
+    process.exit(2);
   }
-  return [...out.matchAll(/^\s*(?:name:\s*)?(practical-media[a-z-]*)\s*$/gim)].map((m) => m[1]);
-}
-
-function wrangler(args) {
-  return execFileSync('npx', ['wrangler', ...args], {
-    encoding: 'utf8', env: { ...process.env, WRANGLER_SEND_METRICS: 'false' }, stdio: ['ignore', 'pipe', 'inherit'],
-  });
-}
-
-function main() {
-  const i = process.argv.indexOf('--env');
-  const name = BUCKETS[i > 0 ? process.argv[i + 1] : ''];
-  if (!name) { console.error('用法：node scripts/ensure-r2.mjs --env staging|production'); process.exit(2); }
-  let have = [];
-  try { have = parseBuckets(wrangler(['r2', 'bucket', 'list'])); }
-  catch { console.error('✗ 列不出 R2 桶：令牌可能没有 R2 权限，或者这个账户还没开通 R2（控制台左边 R2 → Get started，要先绑一张卡，免费额度内不扣钱）'); process.exit(1); }
-  if (have.includes(name)) { console.log(`✓ R2 桶 ${name} 已存在`); return; }
-  try { wrangler(['r2', 'bucket', 'create', name]); }
-  catch { console.error(`✗ 建不出 R2 桶 ${name}：按《上线操作手册》第二步在控制台手动建一个同名的桶，再重跑一次部署`); process.exit(1); }
-  console.log(`✓ 新建 R2 桶 ${name}`);
+  const dir = path.join(ROOT, 'media');
+  const scan = scanMedia(dir);
+  const m = buildManifest(scan.files, SCENE_IDS);
+  console.log(`· 这次部署（${env}）会带上 ${scan.files.length} 个素材文件，${m.ready} / ${m.total} 个场景齐了`);
+  if (!scan.files.length) {
+    console.log('  ✗ media/ 里一个素材都没有：网站打得开，但首屏会写「素材还没生成 0 / 30」，开始按钮按不动。');
+    console.log('    按《上线操作手册》第四步，在 GitHub 网页上把素材拖进 media/ 文件夹。');
+  } else if (m.ready < m.total) {
+    const 差几个 = m.scenes.filter((s) => !s.ready && s.missing.length < 5);
+    console.log(`  · 还差 ${m.total - m.ready} 个场景；齐了的那些已经能出题，缺的会自动跳过（不算答错）。`);
+    for (const s of 差几个) console.log(`    scene-${s.id}：只差 ${s.missing.join('、')}`);
+  }
+  if (scan.ignored.length) {
+    console.log(`  · media/ 里有 ${scan.ignored.length} 个名字不算素材的文件，不会带上：${scan.ignored.slice(0, 6).join('、')}`);
+  }
 }
 
 if (process.argv[1] && process.argv[1].endsWith('ensure-r2.mjs')) main();

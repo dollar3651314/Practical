@@ -1,23 +1,29 @@
-# Practical 1.0 自用版（agents 项目/Practical）：Cloudflare Worker + R2，零成本（P-5 已定）。
+# Practical 1.0 自用版（agents 项目/Practical）：一个 Cloudflare Worker，零成本（P-5 已定）。
 # - 先用 workers.dev 免费子域名（C93）；品牌和自有域名留到阶段 C，所以这里不写 routes。
 # - 密钥一个都不写在这里（底线 1）：部署用的 CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID 由 Amos 填进 GitHub 仓库 Secrets，见《上线操作手册》。
 # - 没有数据库：成绩只存浏览器 localStorage（《使用场景清单-自用版》第一节，阶段 B 不做账号、不做跨设备同步）。
 # - 没有定时任务（全账号只有 5 个，C120）。
+# - 1.0 不用 R2（Amos 2026-11-03：功能验证阶段不绑卡，而开通 R2 必须先绑付款方式）：
+#   素材放仓库的 media/，构建时和网页一起拼进 dist/，跟代码一块部署。将来要收费、素材要保密再切回 R2，
+#   那时只换 src/index.ts 里读素材的那一层，/media/<文件名> 和 /api/manifest 的形状不变。
 name = "practical"
 main = "src/index.ts"
 compatibility_date = "2026-10-01"
 workers_dev = true
 keep_vars = true
 
-# 网页本体（web/ 整个目录）由 Cloudflare 直接发，Worker 只管 /api/* 和 /media/*
-[assets]
-directory = "web"
-binding = "ASSETS"
+# 部署前先把 web/（网页）+ media/（素材）拼成 dist/，并扫出素材清单 dist/_media-manifest.json。
+# 写在这里是为了 wrangler deploy / dev / --dry-run 都会自动跑一遍，不会出现"清单和素材对不上"。
+[build]
+command = "node scripts/build-assets.mjs"
 
-# 真素材（30 个场景 × 4 图 + 1 段音频）。桶由 Amos 在控制台建一次，见《上线操作手册》第二步。
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "practical-media"
+# 网页和素材都由 Cloudflare 的静态资源直接发。
+# run_worker_first：/media/* 先过 Worker——它要挡住不合规的文件名、给缺的文件回一句人话的 404（S10 的降级依据）、
+# 加上长缓存；别的路径（/、app.js、_media-manifest.json）静态资源自己发，Worker 不插手。
+[assets]
+directory = "dist"
+binding = "ASSETS"
+run_worker_first = ["/media/*"]
 
 [vars]
 ENVIRONMENT = "production"
@@ -26,13 +32,10 @@ ENVIRONMENT = "production"
 name = "practical-staging"
 workers_dev = true
 
-[[env.staging.r2_buckets]]
-binding = "MEDIA"
-bucket_name = "practical-media-staging"
-
 [env.staging.assets]
-directory = "web"
+directory = "dist"
 binding = "ASSETS"
+run_worker_first = ["/media/*"]
 
 [env.staging.vars]
 ENVIRONMENT = "staging"

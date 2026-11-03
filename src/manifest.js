@@ -1,5 +1,5 @@
-// 素材清单：R2 桶里（或本地文件夹里）有哪些文件 → 哪些场景能出题。
-// 写成普通 JS 是为了三处共用同一份规则：Worker（src/index.ts）、本地检查脚本（scripts/check-media.mjs）、单元测试。
+// 素材清单：media/ 里（或任何一个文件夹里）有哪些文件 → 哪些场景能出题。
+// 写成普通 JS 是为了四处共用同一份规则：Worker（src/index.ts）、构建脚本（scripts/build-assets.mjs）、本地检查脚本（scripts/check-media.mjs）、单元测试。
 // 命名规则来自 agents《素材方案-交给Amos的生产包》第五节，一个字母都不能改：
 //   scene-01-correct.png / scene-01-d1-phoneme.png / scene-01-d2-action.png / scene-01-d3-function.png / scene-01-audio.mp3
 // 图片 PNG / JPG / WebP 都收（生产包第二节："PNG 或 JPG 原图直接给我们就行"），音频 MP3 / M4A / WAV 都收。

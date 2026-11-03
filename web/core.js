@@ -265,7 +265,7 @@ export function manifestSummary(manifest) {
   if (ready === 0) {
     return {
       ready, total, canStart: false,
-      text: `素材还没生成（${ready} / ${total}）。按《上线操作手册》第四步把 30 个场景的图和音频传进 R2，这里就能开始了。`,
+      text: `素材还没生成（${ready} / ${total}）。按《上线操作手册》第四步把 30 个场景的图和音频传进仓库的 media/ 文件夹，这里就能开始了。`,
     };
   }
   if (ready < total) {

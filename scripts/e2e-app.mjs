@@ -1,22 +1,27 @@
 #!/usr/bin/env node
 /**
- * 浏览器级验收测试（agents C141）：本地用 wrangler dev 起真正的 Worker（真静态资源 + 真 R2 本地模拟），
+ * 浏览器级验收测试（agents C141）：本地用 wrangler dev 起真正的 Worker（真构建出来的静态资源），
  * 在真 Chromium 里按《使用场景清单-自用版》的 S 编号一条一条走。
  *   node scripts/e2e-app.mjs            # CI 跑这个
  *   node scripts/e2e-app.mjs --shots 目录 # 另外留截图
  * 两层：
- *   ① 真素材这一段：往本地 R2 里真塞一个场景的 5 个文件，页面真从 /media/ 读图、读音频、答一题、看复盘；
- *   ② 其余场次：用 Playwright 拦 /api/manifest 和 /media/*，造出"30 个全齐""12 / 30""0 / 30""读不到"四种局面，
- *      因为往本地 R2 塞 150 个文件要跑 150 次 wrangler，太慢。素材清单和 /media 的服务端逻辑另有单元测试（test/worker.test.ts）。
+ *   ① 真素材这一段：先跑 scripts/build-assets.mjs 把 web/ + 仓库里的 media/ 拼成 dist/，
+ *      页面真从 /media/ 读仓库里 Amos 生成的 .jpg 和 .mp3，答完一整轮，看复盘；
+ *   ② 其余场次：用 Playwright 拦 /api/manifest 和 /media/*，造出"30 个全齐""12 / 30""3 / 30""0 / 30""读不到"五种局面，
+ *      因为真素材现在只有 21 个场景，造不出"全齐"，也造不出"读不到"。素材清单和 /media 的服务端逻辑
+ *      另有单元测试（test/worker.test.ts、test/build-assets.test.ts）。
  * 任何一条不符就以非 0 退出。
  */
-import { spawn, execFileSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import { png, wav } from './make-fake-media.mjs';
+import { buildAssets } from './build-assets.mjs';
+import { buildManifest, SCENE_IDS } from '../src/manifest.js';
+import { SCENES } from '../web/scenes.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WORK = path.join(ROOT, '.wrangler/e2e');
@@ -35,31 +40,24 @@ const IDS = Array.from({ length: 30 }, (_, i) => String(i + 1).padStart(2, '0'))
 const COLOR = { correct: [40, 160, 120], 'd1-phoneme': [190, 70, 70], 'd2-action': [70, 90, 190], 'd3-function': [190, 160, 50] };
 const AUDIO = wav(0.25, 440);
 
-// ---------- 本地服务：wrangler dev（真 Worker + 真 web/ + 本地 R2） ----------
+// ---------- 本地服务：wrangler dev（真 Worker + 真构建出来的 dist/） ----------
 rmSync(WORK, { recursive: true, force: true });
 mkdirSync(WORK, { recursive: true });
+// 和线上同一个构建脚本：web/ + 仓库里的 media/ → dist/（含构建时扫出来的 _media-manifest.json）
+const built = buildAssets({ media: path.join(ROOT, 'media'), out: path.join(WORK, 'dist') });
+const REAL = buildManifest(built.files, SCENE_IDS);
+const READY_IDS = REAL.scenes.filter((s) => s.ready).map((s) => s.id);
+/** 仓库里一个文件都没有的场景（后面拿它测 S10 的 404） */
+const MISSING_ID = REAL.scenes.find((s) => s.missing.length === SLOTS.length + 1)?.id || '30';
+console.log(`· 已构建 dist/：${built.files.length} 个素材文件，真实清单 ${REAL.ready} / ${REAL.total} 个场景齐了`);
 writeFileSync(path.join(WORK, 'wrangler.toml'), [
   'name = "practical-e2e"', 'main = "../../src/index.ts"', 'compatibility_date = "2026-10-01"',
-  '[assets]', 'directory = "../../web"', 'binding = "ASSETS"', '',
-  '[[r2_buckets]]', 'binding = "MEDIA"', 'bucket_name = "practical-e2e"', '',
+  '[assets]', 'directory = "dist"', 'binding = "ASSETS"', 'run_worker_first = ["/media/*"]', '',
   '[vars]', 'ENVIRONMENT = "e2e"', '',
 ].join('\n'));
 const WRANGLER = path.join(ROOT, 'node_modules/wrangler/bin/wrangler.js');
 const wenv = { ...process.env, WRANGLER_SEND_METRICS: 'false', CI: '1' };
 const cfg = ['-c', path.join(WORK, 'wrangler.toml'), '--persist-to', path.join(WORK, 'state')];
-
-// 场景 01 的 5 个文件真塞进本地 R2（后面要真从 /media/ 读）
-const seedDir = path.join(WORK, 'seed');
-mkdirSync(seedDir, { recursive: true });
-for (const slot of SLOTS) {
-  const f = path.join(seedDir, `scene-01-${slot}.png`);
-  writeFileSync(f, png(64, COLOR[slot]));
-  execFileSync(process.execPath, [WRANGLER, 'r2', 'object', 'put', `practical-e2e/scene-01-${slot}.png`, '--file', f, '--local', ...cfg], { cwd: ROOT, env: wenv, stdio: 'pipe' });
-}
-const af = path.join(seedDir, 'scene-01-audio.mp3');
-writeFileSync(af, wav(0.25, 520));
-execFileSync(process.execPath, [WRANGLER, 'r2', 'object', 'put', 'practical-e2e/scene-01-audio.mp3', '--file', af, '--ct', 'audio/wav', '--local', ...cfg], { cwd: ROOT, env: wenv, stdio: 'pipe' });
-console.log('· 本地 R2 已塞进场景 01 的 5 个文件');
 
 const port = await new Promise((ok) => { const s = net.createServer().listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => ok(p)); }); });
 const BASE = `http://127.0.0.1:${port}`;
@@ -75,18 +73,32 @@ for (let i = 0; ; i++) {
   await sleep(500);
 }
 
-// ---------- 一、服务端（真 R2） ----------
+// ---------- 一、服务端（真素材，不 mock） ----------
 {
   const h = await (await fetch(BASE + '/health')).json();
-  check('/health 说清素材齐了几个，且不含密钥', h.ok === true && h.media_ready === 1 && h.media_total === 30, h);
-  const img = await fetch(BASE + '/media/scene-01-correct.png');
-  check('/media 真从 R2 发图（200 + image/png）', img.status === 200 && (img.headers.get('content-type') || '').includes('image/png'), img.status);
-  const miss = await fetch(BASE + '/media/scene-02-audio.mp3');
-  check('S10 缺素材的 404 带一句人话', miss.status === 404 && (await miss.text()).includes('还没生成'), miss.status);
+  check('/health 说清素材齐了几个，且不含密钥', h.ok === true && h.media_ready === REAL.ready && h.media_total === 30, h);
+  const img = await fetch(BASE + `/media/scene-${READY_IDS[0]}-correct.jpg`);
+  check('/media 真从仓库的 media/ 发图（200 + image/jpeg，真素材是 .jpg 不是 .png）',
+    img.status === 200 && (img.headers.get('content-type') || '').includes('image/jpeg'), { s: img.status, ct: img.headers.get('content-type') });
+  check('/media 发的是真文件，不是空壳（和磁盘上一样大）',
+    Number(img.headers.get('content-length') || (await img.arrayBuffer()).byteLength) > 10000, img.headers.get('content-length'));
+  const au = await fetch(BASE + `/media/scene-${READY_IDS[0]}-audio.mp3`);
+  check('/media 发音频（200 + audio/mpeg + 一天缓存）',
+    au.status === 200 && (au.headers.get('content-type') || '').includes('audio/mpeg') && (au.headers.get('cache-control') || '').includes('max-age=86400'),
+    { s: au.status, ct: au.headers.get('content-type'), cc: au.headers.get('cache-control') });
+  const miss = await fetch(BASE + `/media/scene-${MISSING_ID}-audio.mp3`);
+  check('S10 缺素材的 404 带一句人话（还没生成的场景）', miss.status === 404 && (await miss.text()).includes('还没生成'), miss.status);
+  const miss1 = await fetch(BASE + '/media/scene-20-d3-function.jpg');
+  check('S10 只缺一个文件的场景，那一个文件也是 404（场景 20 缺虚词数字干扰图）', miss1.status === 404, miss1.status);
   const bad = await fetch(BASE + '/media/..%2Fwrangler.toml');
-  check('不许用 .. 跳出桶', bad.status === 400, bad.status);
+  check('不许用 .. 跳出 media 文件夹', bad.status === 400, bad.status);
+  const mani = await fetch(BASE + '/media/_media-manifest.json');
+  check('清单文件本身发不出去（名字不是素材）', mani.status === 400, mani.status);
   const m = await (await fetch(BASE + '/api/manifest')).json();
-  check('/api/manifest 真桶里是 1 / 30', m.ready === 1 && m.total === 30, { ready: m.ready });
+  check(`/api/manifest 读构建时扫出来的清单，和仓库里的真素材对得上（${REAL.ready} / 30）`,
+    m.ready === REAL.ready && m.total === 30 && m.scenes.filter((s) => s.ready).map((s) => s.id).join() === READY_IDS.join(), { ready: m.ready });
+  check('/api/manifest 把"场景 20 缺虚词数字干扰图"如实报出来',
+    m.scenes.find((s) => s.id === '20')?.missing.join() === 'd3-function', m.scenes.find((s) => s.id === '20'));
 }
 
 // ---------- 浏览器 ----------
@@ -185,24 +197,48 @@ async function playRound(page, { wrongLadder = false } = {}) {
   await ctx.close();
 }
 
-// ---------- 三、真素材走通一题（真 R2、不 mock） ----------
+// ---------- 三、真素材走通一整轮（仓库里 Amos 生成的 .jpg / .mp3，不 mock） ----------
 {
   const { ctx, page, media } = await open();
   await passSoundTest(page);
-  check('素材只齐 1 个时首屏说清 1 / 30', (await page.innerText('#h-media')).includes('1 / 30'), await page.innerText('#h-media'));
-  check('齐了至少一个就能开始', !(await page.isDisabled('#b-start')), null);
+  check(`素材没齐时首屏说清 ${REAL.ready} / 30`, (await page.innerText('#h-media')).includes(`${REAL.ready} / 30`), await page.innerText('#h-media'));
+  check('齐了一部分就能开始', !(await page.isDisabled('#b-start')), null);
   await page.click('#b-start');
   await page.waitForSelector('#s-quiz:not([hidden])');
-  check('齐的不足 10 个时这一轮就做几题（这里 1 题）', (await page.$$eval('#q-pips i', (e) => e.length)) === 1, null);
+  check('齐了 21 个时这一轮仍然出 10 题', (await page.$$eval('#q-pips i', (e) => e.length)) === 10, null);
   await waitPlayable(page);
   const real = await page.$$eval('#q-grid img', (e) => e.map((x) => ({ src: x.getAttribute('src'), w: x.naturalWidth })));
-  check('四张图是真从 /media/ 读的 R2 图片', real.length === 4 && real.every((x) => x.src.startsWith('/media/scene-01-') && x.w === 64), real);
-  check('真素材的音频真播了', (await page.evaluate(() => window.__plays.length)) >= 1 && media.some((u) => u.includes('scene-01-audio.mp3')), null);
+  const okSrc = /^\/media\/scene-\d{2}-(correct|d1-phoneme|d2-action|d3-function)\.(jpg|png|webp)$/;
+  check('四张图是真从 /media/ 读的仓库里的真图片（真解出来了，不是碎图）',
+    real.length === 4 && real.every((x) => okSrc.test(x.src) && x.w >= 512), real);
+  check('四张图只从齐了的场景里出（题号在齐了的名单里）',
+    real.every((x) => READY_IDS.includes(x.src.slice('/media/scene-'.length, '/media/scene-'.length + 2))), real.map((x) => x.src));
+  check('真素材的音频真播了（真 .mp3 解得开）',
+    (await page.evaluate(() => window.__plays.length)) >= 1 && media.some((u) => /\/media\/scene-\d{2}-audio\.mp3$/.test(u)), media.slice(0, 3));
   check('题目区一个字都没有（真素材这一局）', (await page.innerText('#s-quiz')).trim() === '', await page.innerText('#s-quiz'));
   if (SHOTS) { mkdirSync(SHOTS, { recursive: true }); await page.screenshot({ path: path.join(SHOTS, '题目区-真素材.png') }); }
-  await page.click('#q-grid .cell[data-idx="0"]');
-  await page.waitForSelector('#s-review:not([hidden])', { timeout: 15000 });
-  check('S5 复盘页到这里才出英文原文', (await page.innerText('#r-list')).includes('Hand me the stapler'), null);
+  await playRound(page);
+  const ids = await page.evaluate(() => window.__app.DB().log.slice(0, 10).map((r) => r.id));
+  const want = ids.map((id) => SCENES.find((s) => s.id === id).en);
+  const rlist = await page.innerText('#r-list');
+  check('S5 复盘页到这里才出英文原文（这一轮 10 条都对得上）',
+    want.every((en) => rlist.includes(en)) && (await page.$$eval('#r-list > li', (e) => e.length)) === 10, want.slice(0, 2));
+  check('真素材一整轮全点对：复盘页记 10/10', /10\/10/.test(await page.innerText('#r-right')), await page.innerText('#r-right'));
+  await ctx.close();
+}
+
+// ---------- 三之二、齐的不足 10 个：这一轮就做几题（原来靠"本地 R2 只塞 1 个场景"守的那一条） ----------
+{
+  const { ctx, page } = await open({ mock: { manifest: manifestOf(3) } });
+  await passSoundTest(page);
+  check('只齐 3 个时首屏说清 3 / 30，并且能开始',
+    (await page.innerText('#h-media')).includes('3 / 30') && !(await page.isDisabled('#b-start')), await page.innerText('#h-media'));
+  await page.click('#b-start');
+  await page.waitForSelector('#s-quiz:not([hidden])');
+  check('齐的不足 10 个时这一轮就做几题（这里 3 题）', (await page.$$eval('#q-pips i', (e) => e.length)) === 3, null);
+  await playRound(page);
+  const ids3 = await page.evaluate(() => window.__app.DB().log.map((r) => r.id));
+  check('只从齐了的 3 个场景里出题，不会出到缺素材的场景上', ids3.every((id) => ['01', '02', '03'].includes(id)), ids3);
   await ctx.close();
 }
 
@@ -307,11 +343,12 @@ async function playRound(page, { wrongLadder = false } = {}) {
 
 // ---------- 六、素材没齐的三种局面 ----------
 {
-  const { ctx, page } = await open({ mock: { manifest: { ready: 0, total: 30, scenes: manifestOf(0).scenes, note: '还没绑定 R2 桶（MEDIA）' } } });
+  const NOTE = '读不到素材清单（这次部署没带上 _media-manifest.json）';
+  const { ctx, page } = await open({ mock: { manifest: { ready: 0, total: 30, scenes: manifestOf(0).scenes, note: NOTE } } });
   await passSoundTest(page);
   const t = await page.innerText('#h-media');
   check('一个素材都没有时：首屏说"素材还没生成 0 / 30"', t.includes('素材还没生成') && t.includes('0 / 30'), t);
-  check('一个素材都没有时：把原因也说出来（R2 没绑）', t.includes('R2'), t);
+  check('一个素材都没有时：把服务端给的原因原样说出来，不吞掉', t.includes(NOTE), t);
   check('一个素材都没有时：开始按钮按不动，不让他点进白屏', await page.isDisabled('#b-start'), null);
   await ctx.close();
 }
