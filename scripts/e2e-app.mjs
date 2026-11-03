@@ -28,6 +28,8 @@ const check = (name, ok, got) => {
   if (!ok) fails.push(name);
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** 等不到就记一条 ✗，而不是抛异常把后面所有场次都带崩（审查 🟡4） */
+const ok = async (fn) => { try { await fn(); return true; } catch { return false; } };
 const SLOTS = ['correct', 'd1-phoneme', 'd2-action', 'd3-function'];
 const IDS = Array.from({ length: 30 }, (_, i) => String(i + 1).padStart(2, '0'));
 const COLOR = { correct: [40, 160, 120], 'd1-phoneme': [190, 70, 70], 'd2-action': [70, 90, 190], 'd3-function': [190, 160, 50] };
@@ -104,7 +106,7 @@ async function open({ mock = null, viewport = { width: 390, height: 844 }, query
     await ctx.route('**/media/**', (route) => {
       const key = new URL(route.request().url()).pathname.slice('/media/'.length);
       if (mock.broken) return route.fulfill({ status: 404, contentType: 'text/plain', body: '这一题的素材还没生成' });
-      if (key.endsWith('.mp3')) return route.fulfill({ status: 200, contentType: 'audio/wav', body: AUDIO });
+      if (key.endsWith('.mp3')) return route.fulfill({ status: 200, contentType: 'audio/wav', body: mock.audio || AUDIO });
       const slot = SLOTS.find((s) => key.includes('-' + s + '.')) || 'correct';
       return route.fulfill({ status: 200, contentType: 'image/png', body: png(64, COLOR[slot]) });
     });
@@ -153,8 +155,8 @@ async function playRound(page, { wrongLadder = false } = {}) {
       const gone = await page.$$eval('#q-grid .cell.gone', (e) => e.length);
       check('S4 第 2 次选错：去掉两张，只剩正确图和被点的那张', gone === 2, gone);
       await page.click('#q-grid .cell[data-idx="2"]');          // 第 3 次错
-      await page.waitForSelector('#q-grid .cell[data-idx="0"].reveal', { timeout: 5000 });
-      check('S4 第 3 次选错：揭晓正确图', true);
+      check('S4 第 3 次选错：揭晓正确图',
+        await ok(() => page.waitForSelector('#q-grid .cell[data-idx="0"].reveal', { timeout: 5000 })));
       check('S4 揭晓时题目区仍然一个字都没有', (await page.innerText('#s-quiz')).trim() === '', await page.innerText('#s-quiz'));
       await page.waitForFunction((k) => document.querySelectorAll('#q-pips i.c, #q-pips i.d').length > k, i, { timeout: 8000 });
       continue;
@@ -222,7 +224,10 @@ async function playRound(page, { wrongLadder = false } = {}) {
   const rev = await page.innerText('#s-review');
   check('S5 复盘页列出这一轮 10 条原文', (await page.$$eval('#r-list > li', (e) => e.length)) === 10, null);
   check('S5 复盘页给出答对数和平均反应时间', /\d\/10/.test(await page.innerText('#r-right')) && /ms|—/.test(await page.innerText('#r-rt')), rev.slice(0, 60));
-  check('S5 四类错误里"音素"记到了 1（第 1 题第一次点的是音素干扰图）', (await page.innerText('#r-bars')).includes('音素'), null);
+  const barN = await page.$$eval('#r-bars .b', (es) => Object.fromEntries(
+    es.map((e) => [e.querySelector('.muted').textContent, Number(e.querySelector('b').textContent)])));
+  check('S5 四类错误里"音素"记到了 1（第 1 题第一次点的是音素干扰图）',
+    barN['音素'] === 1 && barN['动作'] === 0 && barN['虚词数字'] === 0, barN);
   check('S5 中文默认折叠', await page.isHidden('[data-zhbox="0"]'), null);
   check('B-6 复盘页强制看一眼：1 秒内回不去', (await page.getAttribute('#b-back', 'aria-disabled')) === 'true', null);
   await page.click('#r-list [data-zh="0"]');
@@ -336,8 +341,8 @@ async function playRound(page, { wrongLadder = false } = {}) {
   await page.click('#q-play');
   await page.waitForSelector('#q-ico-mute:not([hidden])', { timeout: 10000 });
   check('S10 连失败 3 次：题目区只给一个哑喇叭图标（P-2），不给文字', (await page.innerText('#s-quiz')).trim() === '', null);
-  await page.waitForFunction(() => document.querySelectorAll('#q-pips i.d').length >= 1, null, { timeout: 8000 });
-  check('S10 连失败 3 次就跳过这一题，一轮不因为一题卡死', true);
+  check('S10 连失败 3 次就跳过这一题，一轮不因为一题卡死',
+    await ok(() => page.waitForFunction(() => document.querySelectorAll('#q-pips i.d').length >= 1, null, { timeout: 8000 })));
   const skipped = await page.evaluate(() => window.__app.DB().log[0]);
   check('S10 记成"其他"、未作答，不算答错', skipped.res === 'skip' && skipped.etype === '其他', skipped);
   await ctx.close();
@@ -351,13 +356,44 @@ async function playRound(page, { wrongLadder = false } = {}) {
   await page.waitForSelector('#s-quiz:not([hidden])');
   await waitPlayable(page);
   const before = await page.evaluate(() => window.__plays.length);
-  await page.waitForFunction((n) => window.__plays.length > n, before, { timeout: 8000 });
-  check('S12 一直不动：自动重播一次', true);
+  check('S12 一直不动：自动重播一次',
+    await ok(() => page.waitForFunction((n) => window.__plays.length > n, before, { timeout: 8000 })));
   await page.waitForSelector('#q-skip:not([hidden])', { timeout: 8000 });
   check('S12 再不动：出现「跳过」（只有图标，不出文字）', (await page.innerText('#s-quiz')).trim() === '', null);
   await page.click('#q-skip');
   const row = await page.evaluate(() => window.__app.DB().log[0]);
   check('S12 跳过记"未作答"，不计错', row.res === 'skip' && row.etype === '其他', row);
+  await ctx.close();
+}
+
+// ---------- 七之二、S7 反应时间只在题目区计时（审查 🔴1 补的） ----------
+// 为什么要这一条：原来 135 条里没有任何一条守住"计时起点"。审查会话把起点改成"一轮开始"，
+// 75 条 e2e 全绿照过——因为复盘页只断言了 #r-rt 像个数字。这一局用 1.2 秒的长音频 +
+// 第 1 题故意磨蹭，让三种错法（从一轮开始算、从题目出现算、每题不归零）都会当场红。
+{
+  const { ctx, page } = await open({
+    mock: { manifest: manifestOf(30), audio: wav(1.2, 440) }, query: '?debug=1',
+  });
+  await passSoundTest(page);
+  await page.click('#b-start');
+  await page.waitForSelector('#s-quiz:not([hidden])');
+
+  await waitPlayable(page);   // 音频播完、格子解锁 —— 计时应当从这一刻起算
+  await sleep(2500);          // 第 1 题故意磨蹭 2.5 秒
+  await page.click('#q-grid .cell[data-idx="0"]');
+  await page.waitForFunction(() => window.__app.DB().log.length >= 1, null, { timeout: 8000 });
+
+  await waitPlayable(page);   // 第 2 题（题间还隔了 TIMING.nextAfterRight = 1.4 秒）
+  await page.click('#q-grid .cell[data-idx="0"]');   // 这一题立刻点
+  await page.waitForFunction(() => window.__app.DB().log.length >= 2, null, { timeout: 8000 });
+
+  const [rt0, rt1] = await page.evaluate(() => window.__app.DB().log.slice(0, 2).map((r) => r.rt));
+  check('S7 第 1 题磨蹭 2.5 秒：反应时间如实记下来（2000～5000 ms）',
+    rt0 >= 2000 && rt0 <= 5000, { rt0, rt1 });
+  check('S7 第 2 题立刻点：反应时间不含 1.2 秒音频、也不含题间 1.4 秒间隔（< 900 ms）',
+    rt1 !== null && rt1 < 900, { rt0, rt1 });
+  check('S7 每题各算各的，不是从一轮开始累加（第 2 题应当明显小于第 1 题）',
+    rt1 < rt0, { rt0, rt1 });
   await ctx.close();
 }
 
@@ -376,9 +412,11 @@ for (const vp of [{ width: 390, height: 844 }, { width: 844, height: 390 }, { wi
       noScroll: document.documentElement.scrollWidth <= window.innerWidth + 1,
       square: Math.abs(c.width - c.height) < 2,
       inView: g.getBoundingClientRect().bottom <= window.innerHeight + 1,
+      // body{overflow-x:hidden} 让 scrollWidth 永远合格，所以真正起作用的是这一条：量四图网格自己的宽
+      gridFits: g.getBoundingClientRect().width <= window.innerWidth + 1 && c.width <= window.innerWidth + 1,
     };
   });
-  check(`S14 ${vp.width}×${vp.height}：首屏和题目区都不横向滚动`, homeScroll && q.noScroll, { homeScroll, ...q });
+  check(`S14 ${vp.width}×${vp.height}：首屏和题目区都不横向滚动`, homeScroll && q.noScroll && q.gridFits, { homeScroll, ...q });
   check(`S14 ${vp.width}×${vp.height}：四张图仍是正方形，且限在屏幕高度内`, q.square && q.inView, q);
   if (SHOTS && vp.width === 844) await page.screenshot({ path: path.join(SHOTS, '题目区-横屏.png') });
   await ctx.close();
