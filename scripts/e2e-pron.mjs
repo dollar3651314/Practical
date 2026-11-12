@@ -175,6 +175,88 @@ const 按 = await p.evaluate(() => ({
 check('④ 按钮都 ≥52px 高（压得过外框那条 38px），整块里一个输入框都没有', 按.小.length === 0 && 按.输入框 === 0, 按);
 if (SHOTS) { await p.evaluate(() => scrollTo(0, 0)); await p.screenshot({ path: path.join(SHOTS, '发音训练-整页-390.png'), fullPage: false }); }
 
+// ---- ⑤ S2 句子训练（/s2）：同一个服务，顺手走一遍，省得再起一次 ----
+// 这一页**不发任何请求、不调 AI、不读数据库**，所以只验界面和"每一句都标出处"这件事。
+const net前 = net净.length;
+await p.goto(BASE + '/s2');
+await p.waitForSelector('#s2-step', { timeout: WAIT, state: 'visible' });
+const s2一 = await p.evaluate(() => ({
+  课数: document.querySelectorAll('#s2-cards .s2-card').length,
+  大: (document.querySelector('#s2-step .s2-big') || {}).textContent || '',
+  说: (document.querySelector('#s2-step .s2-ask') || {}).textContent || '',
+  出处: (document.querySelector('#s2-step .s2-src') || {}).textContent || '',
+  num: (document.getElementById('s2-num') || {}).textContent || '',
+}));
+check('⑤ /s2 打得开：13 课都在，第 1 步有话、有大字、有出处',
+  s2一.课数 === 13 && !!s2一.说 && !!s2一.大 && /课件原文|按课件规则推出/.test(s2一.出处), s2一);
+check('⑤ 第 1 步就是第 1 / 共 N 步', /^第 1 \//.test(s2一.num), s2一.num);
+
+// **一打开就能看见要做的那一步**，不是先看见 13 个课卡片。
+// （2026-11-12 第一版就是这样：13 张卡占满整屏，那一步被挤到屏幕外，等于让他先自己挑课）
+const s2上 = await p.evaluate(() => {
+  const r = document.querySelector('#s2-step .s2-ask').getBoundingClientRect();
+  // **查人看不看得见，不查 hidden 属性**：display:flex 会盖掉 [hidden] 的默认样式，
+  // 属性为真、元素照样在屏幕上（2026-11-12 就这么漏过一次）
+  const c = document.getElementById('s2-cards');
+  return { 那句话的位置: Math.round(r.top), 屏高: window.innerHeight,
+    课卡片展开着: getComputedStyle(c).display !== 'none' || c.getBoundingClientRect().height > 0 };
+});
+check('⑤ 一打开就看得见要做的那一步（不用滚），课的卡片默认是收起的',
+  s2上.那句话的位置 < s2上.屏高 && !s2上.课卡片展开着, s2上);
+
+// 「换一课」点开才出现 13 张卡
+await p.click('#s2-swap');
+const s2卡 = await p.evaluate(() => ({
+  展开: getComputedStyle(document.getElementById('s2-cards')).display !== 'none',
+  张数: document.querySelectorAll('#s2-cards .s2-card').length }));
+check('⑤ 点「换一课」才展开，13 课都在', s2卡.展开 && s2卡.张数 === 13, s2卡);
+await p.click('#s2-swap');
+
+// 点「记住了，下一步」真的前进一步
+await p.evaluate(() => {
+  const b = [...document.querySelectorAll('#s2-step button')].find((x) => /下一步/.test(x.textContent));
+  if (b) b.click();
+});
+const s2二 = await p.evaluate(() => ({
+  num: (document.getElementById('s2-num') || {}).textContent || '',
+  大: (document.querySelector('#s2-step .s2-big') || {}).textContent || '',
+}));
+check('⑤ 点「下一步」真的前进一步，而且换了内容', /^第 2 \//.test(s2二.num) && s2二.大 !== s2一.大, [s2一, s2二]);
+
+// 一屏只有一步：同一时刻屏幕上不许同时出现两道题的原句
+const s2三 = await p.evaluate(() => ({
+  大数: document.querySelectorAll('#s2-step .s2-big').length,
+  问数: document.querySelectorAll('#s2-step .s2-ask').length,
+  输入框: document.querySelectorAll('#s2 input, #s2 textarea, #s2 [contenteditable]').length,
+}));
+check('⑤ 一屏只有一步（一句话、一个大字），一个输入框都没有',
+  s2三.大数 <= 1 && s2三.问数 === 1 && s2三.输入框 === 0, s2三);
+
+// 390 宽不横滚
+const s2横 = await p.evaluate(() => ({
+  页: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  块: [...document.querySelectorAll('#s2 *')].map((e) => [e.className || e.tagName, e.scrollWidth - e.clientWidth]).filter(([, d]) => d > 1),
+}));
+check('⑤ /s2 在 390 宽不横向滚动', s2横.页 <= 1 && s2横.块.length === 0, s2横);
+
+// **这一页一个接口都不该调**（底线 8：不花一分钱）
+const s2请求 = net净.slice(net前).filter((u) => /\/api\//.test(u));
+check('⑤ /s2 整页没调任何接口（不花钱、不读数据库）', s2请求.length === 0, s2请求);
+// 截图前把状态钉死：课卡片收起、回到页顶 —— 截出来的要和他第一眼看到的一样
+await p.evaluate(() => {
+  const box = document.getElementById('s2-cards');
+  if (box && getComputedStyle(box).display !== 'none') document.getElementById('s2-swap').click();
+  scrollTo(0, 0);
+});
+const s2收 = await p.evaluate(() => ({
+  收起了: getComputedStyle(document.getElementById('s2-cards')).display === 'none',
+  那句话的位置: Math.round(document.querySelector('#s2-step .s2-ask').getBoundingClientRect().top),
+  屏高: window.innerHeight,
+}));
+check('⑤ 走到第 2 步之后，要做的那一句**还是**一打开就看得见（不用滚）',
+  s2收.收起了 && s2收.那句话的位置 < s2收.屏高, s2收);
+if (SHOTS) { await p.screenshot({ path: path.join(SHOTS, 'S2句子训练-390.png'), fullPage: false }); }
+
 check('全程没有脚本错误', errors.length === 0, errors.slice(0, 5));
 
 await ctx.close();

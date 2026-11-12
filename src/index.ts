@@ -15,6 +15,7 @@
 // 盲听卡**没有账号、没有写接口**：它的成绩只存浏览器 localStorage（《使用场景清单-自用版》第一节）；
 // 发音训练的成绩和那 56 个词的发音存 D1（migrations/），和盲听卡互不相干。
 import type { Env } from './env';
+import { s2Shell } from './s2-shell';
 import { buildManifest, MEDIA_KEY, SCENE_IDS } from './manifest.js';
 import { pronApi } from './pron';
 import { pronAudioApi } from './pron-audio';
@@ -104,6 +105,7 @@ export async function handle(request: Request, env: Env, now: number = Date.now(
   }
   if (p === '/api/manifest') return json(await manifestOf(request, env));
   if (p.startsWith('/media/')) return serveMedia(request, env, p);
+  if (p === '/s2') return s2Shell();
   if (p === '/pron') {
     if (request.method !== 'GET' && request.method !== 'HEAD') return text('只收 GET 和 HEAD', 405);
     return pronShell();
