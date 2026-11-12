@@ -1,21 +1,28 @@
-// Practical 1.0 自用版的中转服务（Cloudflare Worker）。它只做三件事：
+// Practical 1.0 自用版的中转服务（Cloudflare Worker）。盲听卡那三件事：
 //   1. GET /health          —— 活着没有、素材齐了几个（不含任何密钥）
 //   2. GET /api/manifest    —— 30 个场景各缺哪些文件；前端据此决定出哪些题、怎么降级
 //   3. GET /media/<文件名>   —— 把素材发出去
+// 2026-11-12 从工作台搬过来的「发音训练」再加两条（Amos：「把后续的所有内容包括发音训练整体挪到
+// practical 项目中吧，以后就在 practical 项目中更新」「Practical 加 Workers AI」）：
+//   4. GET /pron            —— 发音训练那一页（服务端拼好的 HTML，src/pron-shell.ts）
+//   5. /api/pron/*          —— 它的接口（src/pron.ts；发音 src/pron-audio.ts），成绩和发音缓存存 D1
+// 上面 1~3 和 web/ 下盲听卡那一套**一个字都没动**。
 // 网页本体和素材都在 Cloudflare 的静态资源里（构建时由 scripts/build-assets.mjs 把 web/ + media/ 拼成 dist/）。
 // 1.0 不用 R2（Amos 2026-11-03：功能验证阶段不绑卡，开通 R2 要绑付款方式），素材跟着代码一起部署。
 // 要紧的一条：静态资源**不能在运行时列目录**，所以"有哪些素材"是构建时扫出来的 /_media-manifest.json。
 // 对外的两个形状一个字都没变：/media/<文件名> 和 /api/manifest 的返回结构和 R2 版完全一样，
 // 将来要收费、素材要保密，只换这一层回 R2，web/ 下的页面代码不用动。
-// 没有数据库、没有账号、没有写接口：成绩只存浏览器 localStorage（《使用场景清单-自用版》第一节）。
+// 盲听卡**没有账号、没有写接口**：它的成绩只存浏览器 localStorage（《使用场景清单-自用版》第一节）；
+// 发音训练的成绩和那 56 个词的发音存 D1（migrations/），和盲听卡互不相干。
+import type { Env } from './env';
 import { buildManifest, MEDIA_KEY, SCENE_IDS } from './manifest.js';
+import { pronApi } from './pron';
+import { pronAudioApi } from './pron-audio';
+import { pronShell } from './pron-shell';
 
 type Manifest = ReturnType<typeof buildManifest>;
 
-export interface Env {
-  ENVIRONMENT: string;
-  ASSETS: Fetcher;
-}
+export type { Env };
 
 /** 构建时写进静态资源的素材清单（scripts/build-assets.mjs 的 MANIFEST_ASSET 必须一致） */
 const MANIFEST_ASSET = '/_media-manifest.json';
@@ -83,16 +90,31 @@ async function serveMedia(request: Request, env: Env, pathname: string): Promise
   return new Response(noBody ? null : res.body, { status: res.status, headers });
 }
 
+/**
+ * 路由本体。`now` 单独传进来，测试才能把"现在"钉死（agents C106）；线上就是 Date.now()。
+ * 发音训练的两条路由放在静态资源兜底**之前**：/pron 是 Worker 自己拼的 HTML，
+ * /api/pron/* 交给 src/pron.ts；不认识的 sub 回 null，这里给 404（不会悄悄落到静态资源上）。
+ */
+export async function handle(request: Request, env: Env, now: number = Date.now()): Promise<Response> {
+  const url = new URL(request.url);
+  const p = url.pathname;
+  if (p === '/health') {
+    const m = await manifestOf(request, env);
+    return json({ ok: true, env: env.ENVIRONMENT, media_ready: m.ready, media_total: m.total, note: m.note });
+  }
+  if (p === '/api/manifest') return json(await manifestOf(request, env));
+  if (p.startsWith('/media/')) return serveMedia(request, env, p);
+  if (p === '/pron') {
+    if (request.method !== 'GET' && request.method !== 'HEAD') return text('只收 GET 和 HEAD', 405);
+    return pronShell();
+  }
+  if (p.startsWith('/api/pron/audio/')) return (await pronAudioApi(env, request, now, p.slice('/api/pron/audio/'.length))) ?? new Response('Not found', { status: 404 });
+  if (p.startsWith('/api/pron/')) return (await pronApi(env, request, now, p.slice('/api/pron/'.length))) ?? new Response('Not found', { status: 404 });
+  return env.ASSETS.fetch(request);
+}
+
 export default {
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
-    const url = new URL(request.url);
-    const p = url.pathname;
-    if (p === '/health') {
-      const m = await manifestOf(request, env);
-      return json({ ok: true, env: env.ENVIRONMENT, media_ready: m.ready, media_total: m.total, note: m.note });
-    }
-    if (p === '/api/manifest') return json(await manifestOf(request, env));
-    if (p.startsWith('/media/')) return serveMedia(request, env, p);
-    return env.ASSETS.fetch(request);
+    return handle(request, env);
   },
 } satisfies ExportedHandler<Env>;

@@ -36,7 +36,7 @@ jobs:
         run: node scripts/check-project-index.mjs
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
-      - name: 单元测试（出题、记分、CSV、素材清单、构建时扫素材、Worker 路由）
+      - name: 单元测试（出题、记分、CSV、素材清单、构建时扫素材、Worker 路由、发音训练）
         run: npm test
       - name: 浏览器缓存
         uses: actions/cache@v4
@@ -46,6 +46,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: 浏览器级验收（S1～S17 一条场景一条，真 Worker + 仓库里的真素材；agents C141）
         run: node scripts/e2e-app.mjs --shots e2e-artifacts
+      - name: 浏览器级验收 · 发音训练（/pron：跟我做前进一步、镜子一个请求都不发、390 宽不横滚）
+        run: node scripts/e2e-pron.mjs --shots e2e-artifacts
       - name: 验收失败时留证据（截图）
         if: failure()
         uses: actions/upload-artifact@v4
