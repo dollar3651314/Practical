@@ -1,7 +1,10 @@
 # Practical 1.0 自用版（agents 项目/Practical）：一个 Cloudflare Worker，零成本（P-5 已定）。
 # - 先用 workers.dev 免费子域名（C93）；品牌和自有域名留到阶段 C，所以这里不写 routes。
 # - 密钥一个都不写在这里（底线 1）：部署用的 CLOUDFLARE_API_TOKEN、CLOUDFLARE_ACCOUNT_ID 由 Amos 填进 GitHub 仓库 Secrets，见《上线操作手册》。
-# - 没有数据库：成绩只存浏览器 localStorage（《使用场景清单-自用版》第一节，阶段 B 不做账号、不做跨设备同步）。
+# - 盲听卡的成绩只存浏览器 localStorage（《使用场景清单-自用版》第一节，阶段 B 不做账号、不做跨设备同步）；
+#   2026-11-12 从工作台搬过来的「发音训练」要存 56 个词的发音缓存和历史成绩，所以加了 D1 和 Workers AI
+#   （Amos 口头批准「Practical 加 Workers AI」）。两样都在 Cloudflare 免费额度内，**不花钱**（C117）。
+# - D1 的 database_id 这里写 local-only（照 Marketing 的写法）：**真实的 id 由 Amos 填**，不许编一个（底线 1、底线 3）。
 # - 没有定时任务（全账号只有 5 个，C120）。
 # - 1.0 不用 R2（Amos 2026-11-03：功能验证阶段不绑卡，而开通 R2 必须先绑付款方式）：
 #   素材放仓库的 media/，构建时和网页一起拼进 dist/，跟代码一块部署。将来要收费、素材要保密再切回 R2，
@@ -25,8 +28,21 @@ directory = "dist"
 binding = "ASSETS"
 run_worker_first = ["/media/*"]
 
+# 发音训练的三张表 + Workers AI 的账本（migrations/）。database_id 由 Amos 填真实值。
+[[d1_databases]]
+binding = "DB"
+database_name = "practical"
+database_id = "local-only"
+migrations_dir = "migrations"
+
+# Workers AI：账号自带的绑定，**不用任何密钥**（底线 1）。aura-2-en 念那 56 个词、whisper 听他念。
+[ai]
+binding = "AI"
+
 [vars]
 ENVIRONMENT = "production"
+# Workers AI 每天最多用多少 neurons（免费额度 10000，照抄 Marketing 的 8000，C117）
+WORKERS_AI_DAILY_NEURONS = "8000"
 
 [env.staging]
 name = "practical-staging"
@@ -37,5 +53,15 @@ directory = "dist"
 binding = "ASSETS"
 run_worker_first = ["/media/*"]
 
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "practical-staging"
+database_id = "local-only"
+migrations_dir = "migrations"
+
+[env.staging.ai]
+binding = "AI"
+
 [env.staging.vars]
 ENVIRONMENT = "staging"
+WORKERS_AI_DAILY_NEURONS = "8000"

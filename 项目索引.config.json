@@ -11,7 +11,7 @@
     }
   ],
   "files": {
-    "include": ["src/**", "web/**", "test/**", "scripts/**", ".github/workflows/**", "package.json", "项目索引.config.json", "*.md"],
+    "include": ["src/**", "web/**", "test/**", "scripts/**", "migrations/**", ".github/workflows/**", "package.json", "vitest.config.ts", "项目索引.config.json", "*.md"],
     "exclude": ["**/package-lock.json", "**/.gitignore"]
   },
   "lists": [
