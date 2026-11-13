@@ -147,3 +147,11 @@ details.set>summary::-webkit-details-marker{display:none}
 details.set>summary::before{content:"▸ "}
 details.set[open]>summary::before{content:"▾ "}
 footer{padding:20px max(16px,env(safe-area-inset-left)) 40px;color:var(--muted);font-size:12px;max-width:720px;margin:0 auto}
+
+/* 首屏底下通往另外两块练习的入口（2026-11-12 加）。只在 #s-home 里出现，做题时跟着整块隐藏。 */
+.hub{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hub a{flex:1 1 220px;min-width:0;display:block;text-decoration:none;color:inherit;
+  padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);min-height:64px}
+.hub a:hover,.hub a:focus-visible{border-color:var(--accent)}
+.hub a b{display:block;font-size:17px;font-weight:600}
+.hub a span{display:block;font-size:12.5px;opacity:.72;margin-top:3px;line-height:1.5}

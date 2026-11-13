@@ -10,6 +10,7 @@
  *    要么是 `src/s2-derive.ts` 按课件规则推出来的，要么是纯界面用语（底线 3）。
  *  - 不调任何 AI、不读数据库、不发任何请求：整页是静态的，**不花一分钱**（C117）。
  */
+import { NAV_CSS, navHtml } from './nav';
 import { S2_JS, S2_MOD } from './s2-page';
 
 const SHELL_CSS = `
@@ -28,7 +29,8 @@ h1 small{display:block;font-size:12.5px;font-weight:400;opacity:.72;margin-top:3
 export const S2_PAGE = `<!doctype html>
 <html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow"><title>S2 句子训练</title>
-<style>${SHELL_CSS}</style></head><body>
+<style>${SHELL_CSS}${NAV_CSS}</style></head><body>
+${navHtml('/s2')}
 <h1>S2 句子训练<small>13 课 · 一屏一步 · 每一句都标出处</small></h1>
 ${S2_MOD}
 <script>${S2_JS}</script>
