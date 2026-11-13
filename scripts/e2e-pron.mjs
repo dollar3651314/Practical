@@ -257,6 +257,36 @@ check('⑤ 走到第 2 步之后，要做的那一句**还是**一打开就看�
   s2收.收起了 && s2收.那句话的位置 < s2收.屏高, s2收);
 if (SHOTS) { await p.screenshot({ path: path.join(SHOTS, 'S2句子训练-390.png'), fullPage: false }); }
 
+// ---- ⑥ 三块能不能互相走到（2026-11-12 漏的：上线了却没有入口）----
+await p.goto(BASE + '/');
+await p.waitForSelector('#s-home, #s-test', { timeout: WAIT });
+const 入口 = await p.evaluate(() => {
+  const home = document.getElementById('s-home');
+  if (home) home.hidden = false;                       // 首屏平时要先过声音测试才出现
+  const a = [...document.querySelectorAll('#s-home .hub a')].map((x) => x.getAttribute('href'));
+  const 题目区里有链接 = !!document.querySelector('#s-quiz a, #s-ans a');
+  return { 首屏链接: a, 题目区里有链接 };
+});
+check('⑥ 首页首屏上有通往 /pron 和 /s2 的入口',
+  入口.首屏链接.includes('/pron') && 入口.首屏链接.includes('/s2'), 入口);
+check('⑥ 题目区里一个链接都没有（约定 1：题目区一个字都不许多）', !入口.题目区里有链接, 入口);
+
+// 从 /pron 点菜单真的能走到 /s2
+await p.goto(BASE + '/pron');
+await p.waitForSelector('.nav a[href="/s2"]', { timeout: WAIT });
+await p.click('.nav a[href="/s2"]');
+await p.waitForSelector('#s2-step', { timeout: WAIT, state: 'visible' });
+const 到了 = await p.evaluate(() => ({ 路径: location.pathname,
+  当前那块: (document.querySelector('.nav a[aria-current="page"]') || {}).getAttribute?.('href') }));
+check('⑥ 从发音训练点菜单真的走到了句子训练，而且标出了当前在哪一块',
+  到了.路径 === '/s2' && 到了.当前那块 === '/s2', 到了);
+
+// 再从 /s2 走回 /pron
+await p.click('.nav a[href="/pron"]');
+await p.waitForSelector('#w-pron', { timeout: WAIT, state: 'visible' });
+const 回来 = await p.evaluate(() => location.pathname);
+check('⑥ 从句子训练点菜单也走得回发音训练', 回来 === '/pron', 回来);
+
 check('全程没有脚本错误', errors.length === 0, errors.slice(0, 5));
 
 await ctx.close();

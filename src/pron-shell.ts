@@ -22,6 +22,7 @@
  *  - 页面上**没有一句关于"这个音怎么发"的话是这里写的**：每一句要么来自 `src/pron-lesson.ts`，
  *    要么是纯界面用语（底线 3）。这个文件只有样式和外壳。
  */
+import { NAV_CSS, navHtml } from './nav';
 import { PRON_CSS, PRON_JS, PRON_MOD } from './pron-page';
 
 /**
@@ -82,7 +83,8 @@ try{addEventListener('pagehide',function(){if(window.pronStop)window.pronStop();
 export const PRON_PAGE = `<!doctype html>
 <html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow"><title>发音训练</title>
-<style>${SHELL_CSS}${PRON_CSS}</style></head><body>
+<style>${SHELL_CSS}${PRON_CSS}${NAV_CSS}</style></head><body>
+${navHtml('/pron')}
 <main><div class="page" id="v-work">
 ${PRON_MOD}
 </div></main>
