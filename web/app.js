@@ -17,6 +17,8 @@ const $$ = (s) => /** @type {HTMLElement[]} */ ([...document.querySelectorAll(s)
 /** @param {string} id */
 const show = (id) => {
   ['s-test', 's-home', 's-quiz', 's-review'].forEach((x) => { $('#' + x).hidden = x !== id; });
+  // 做题和复盘时把三块之间的菜单整条藏起来：题目区一个字都不许多（《项目地图》约定 1）
+  const nav = $('#s-nav'); if (nav) nav.hidden = (id === 's-quiz' || id === 's-review');
   window.scrollTo(0, 0);
 };
 const DEBUG = new URLSearchParams(location.search).has('debug');

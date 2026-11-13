@@ -24,21 +24,32 @@ describe('1. 首页：走得到另外两块', () => {
     expect(INDEX).toMatch(/href="\/s2"/);
   });
 
-  it('这两个链接**只在首屏**（`#s-home` 里），做题时跟着整块隐藏', () => {
-    const i = INDEX.indexOf('<section id="s-home"');
-    expect(i).toBeGreaterThan(-1);
-    // 下一个 <section 之前就是 #s-home 的范围
-    const j = INDEX.indexOf('<section', i + 10);
-    const 首屏 = INDEX.slice(i, j > 0 ? j : undefined);
-    expect(首屏).toMatch(/href="\/pron"/);
-    expect(首屏).toMatch(/href="\/s2"/);
-    // 整份文件里这两个链接只出现在首屏，别处一个都没有（题目区一个字都不许多，约定 1）
+  it('菜单在最顶上，不在任何一个 section 里 —— 不然要先过完声音测试才看得到', () => {
+    const nav = INDEX.indexOf('<nav class="nav" id="s-nav"');
+    const 第一个section = INDEX.indexOf('<section');
+    expect(nav).toBeGreaterThan(-1);
+    expect(nav).toBeLessThan(第一个section);
+  });
+
+  it('整份首页里这两个链接各只出现一次（题目区一个字都不许多，约定 1）', () => {
     expect((INDEX.match(/href="\/pron"/g) ?? []).length).toBe(1);
     expect((INDEX.match(/href="\/s2"/g) ?? []).length).toBe(1);
   });
 
-  it('首屏那块是 hidden 的（做题时整块不在屏幕上）', () => {
-    expect(INDEX).toMatch(/<section id="s-home" hidden>/);
+  it('做题和复盘时菜单整条隐藏', () => {
+    const APP = readFileSync(path.join(__dirname, '..', 'web', 'app.js'), 'utf8');
+    expect(APP).toMatch(/#s-nav/);
+    expect(APP).toMatch(/nav\.hidden = \(id === 's-quiz' \|\| id === 's-review'\)/);
+  });
+
+  it('首页菜单和 src/nav.ts 的菜单**完全一致**（两边不许跑偏）', () => {
+    for (const d of 菜单) {
+      expect([d.路径, INDEX.includes('href="' + d.路径 + '"')]).toEqual([d.路径, true]);
+      expect([d.名, INDEX.includes('<b>' + d.名 + '</b>')]).toEqual([d.名, true]);
+      expect([d.说, INDEX.includes('<span>' + d.说 + '</span>')]).toEqual([d.说, true]);
+    }
+    // 首页上当前那一块是盲听卡
+    expect(INDEX).toMatch(/href="\/" aria-current="page"/);
   });
 });
 

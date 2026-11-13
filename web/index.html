@@ -12,6 +12,17 @@
      ② 首屏多一条素材进度提示（素材还没生成时才出现）。 -->
 <main class="wrap">
 
+<!-- 三块之间的菜单，和 /pron、/s2 顶上那条**一模一样**（src/nav.ts 的 菜单 是唯一的真相，
+     test/nav.test.ts 钉死两边不许跑偏）。做题和复盘时由 app.js 的 show() 整条隐藏 ——
+     题目区一个字都不许多（《项目地图》约定 1）。
+     放在最顶上而不是首屏里：首屏要先过完盲听卡的声音测试才出现，
+     而发音训练和句子训练跟那个声音测试没关系，不该被它挡住。 -->
+<nav class="nav" id="s-nav" aria-label="换一块练">
+ <a href="/" aria-current="page"><b>盲听卡</b><span>听 2 秒，四选一</span></a>
+ <a href="/pron"><b>发音训练</b><span>S1 · 七组易错音</span></a>
+ <a href="/s2"><b>句子训练</b><span>S2 · 13 课语法</span></a>
+</nav>
+
 <!-- ========== S1 声音测试 ========== -->
 <section id="s-test" class="center">
  <div class="card">
@@ -53,14 +64,6 @@
   <div class="banner" id="h-media" hidden></div>
   <p class="tiny" style="margin:10px 0 0">这是<b>这台设备上</b>的记录。换浏览器或清缓存会丢，先用下面的「导出 CSV」兜底。</p>
  </div>
-
- <!-- 另外两块练习的入口。**只放在首屏**（#s-home 做题时是 hidden 的）——
-      题目区一个字都不许多（《项目地图》约定 1）。
-      2026-11-12 发音训练和 S2 上了生产却没有任何入口，Amos 当场问「practical 菜单下 为什么没有」。 -->
- <nav class="hub" aria-label="换一块练">
-  <a href="/pron"><b>发音训练</b><span>S1 · 七组易错音：跟我做 → 对照听 → 考 10 题</span></a>
-  <a href="/s2"><b>句子训练</b><span>S2 · 13 课语法：一屏一步，每句都标出处</span></a>
- </nav>
 
  <div class="card">
   <h2 style="font-size:16px;margin-bottom:10px">看看有没有进步</h2>

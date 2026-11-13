@@ -260,19 +260,46 @@ if (SHOTS) { await p.screenshot({ path: path.join(SHOTS, 'S2句子训练-390.png
 // ---- ⑥ 三块能不能互相走到（2026-11-12 漏的：上线了却没有入口）----
 await p.goto(BASE + '/');
 await p.waitForSelector('#s-home, #s-test', { timeout: WAIT });
+// **一上来就看得见**，不用先过盲听卡的声音测试（2026-11-12 第一版就是这么漏的）
 const 入口 = await p.evaluate(() => {
-  const home = document.getElementById('s-home');
-  if (home) home.hidden = false;                       // 首屏平时要先过声音测试才出现
-  const a = [...document.querySelectorAll('#s-home .hub a')].map((x) => x.getAttribute('href'));
-  const 题目区里有链接 = !!document.querySelector('#s-quiz a, #s-ans a');
-  return { 首屏链接: a, 题目区里有链接 };
+  const nav = document.getElementById('s-nav');
+  const 看得见 = !!nav && getComputedStyle(nav).display !== 'none' && nav.getBoundingClientRect().height > 0;
+  return {
+    菜单看得见: 看得见,
+    链接: [...document.querySelectorAll('#s-nav a')].map((x) => x.getAttribute('href')),
+    这一屏是: ['s-test', 's-home', 's-quiz', 's-review'].find((id) => !document.getElementById(id).hidden),
+    题目区里有链接: !!document.querySelector('#s-quiz a'),
+  };
 });
-check('⑥ 首页首屏上有通往 /pron 和 /s2 的入口',
-  入口.首屏链接.includes('/pron') && 入口.首屏链接.includes('/s2'), 入口);
+check('⑥ 一打开首页（还在声音测试那一屏）菜单就看得见，三块都在',
+  入口.菜单看得见 && 入口.链接.includes('/pron') && 入口.链接.includes('/s2') && 入口.链接.includes('/'), 入口);
 check('⑥ 题目区里一个链接都没有（约定 1：题目区一个字都不许多）', !入口.题目区里有链接, 入口);
 
+// 进了做题那一屏，菜单必须整条消失
+const 做题时 = await p.evaluate(() => {
+  const s = (id) => document.getElementById(id);
+  ['s-test', 's-home', 's-quiz', 's-review'].forEach((x) => { s(x).hidden = x !== 's-quiz'; });
+  const nav = s('s-nav'); nav.hidden = true;           // app.js 的 show() 就是这么做的
+  return { 菜单还在: getComputedStyle(nav).display !== 'none' && nav.getBoundingClientRect().height > 0 };
+});
+check('⑥ 做题那一屏菜单整条不在（约定 1）', !做题时.菜单还在, 做题时);
+await p.goto(BASE + '/');
+await p.waitForSelector('#s-nav', { timeout: WAIT });
+
+// **从首页真的点一下菜单**走到 /pron —— 这正是 2026-11-12 漏掉的那件事，
+// 不许用 goto 代替点击（goto 证明不了"他走得到"）
+await p.click('#s-nav a[href="/pron"]');
+await p.waitForSelector('#w-pron', { timeout: WAIT, state: 'visible' });
+await p.waitForFunction(() => (document.getElementById('pn-csay')?.textContent || '').length > 0, null, { timeout: WAIT });
+const 到pron = await p.evaluate(() => ({
+  路径: location.pathname,
+  那句话: (document.getElementById('pn-csay') || {}).textContent || '',
+  当前: (document.querySelector('.nav a[aria-current="page"]') || {}).getAttribute?.('href'),
+}));
+check('⑥ **从首页点一下菜单**真的走到了发音训练，而且第一步那句话出来了',
+  到pron.路径 === '/pron' && 到pron.那句话.length > 0 && 到pron.当前 === '/pron', 到pron);
+
 // 从 /pron 点菜单真的能走到 /s2
-await p.goto(BASE + '/pron');
 await p.waitForSelector('.nav a[href="/s2"]', { timeout: WAIT });
 await p.click('.nav a[href="/s2"]');
 await p.waitForSelector('#s2-step', { timeout: WAIT, state: 'visible' });
